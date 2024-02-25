@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     Intent intent = new Intent(MainActivity.this, DataInsertActivity.class);
-                    intent.putExtra("type","update");
+                    intent.putExtra("type", "update");
                     intent.putExtra("title", adapter.getNote(viewHolder.getAdapterPosition()).getTitle());
                     intent.putExtra("description", adapter.getNote(viewHolder.getAdapterPosition()).getDescription());
                     intent.putExtra("id", adapter.getNote(viewHolder.getAdapterPosition()).getId());
@@ -77,22 +77,49 @@ public class MainActivity extends AppCompatActivity {
         }).attachToRecyclerView(binding.noteRV);
     }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == 1) {
+//            String title = data.getStringExtra("title");
+//            String description = data.getStringExtra("description");
+//            Note note = new Note(title, description);
+//            noteViewModel.insert(note);
+//            Toast.makeText(this, "note added", Toast.LENGTH_SHORT).show();
+//        } else if (requestCode == 2) {
+//            String title = data.getStringExtra("title");
+//            String description = data.getStringExtra("description");
+//            Note note = new Note(title, description);
+//            note.setId(data.getIntExtra("id", 0));
+//            noteViewModel.update(note);
+//            Toast.makeText(this, "note updated", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             String title = data.getStringExtra("title");
             String description = data.getStringExtra("description");
             Note note = new Note(title, description);
             noteViewModel.insert(note);
             Toast.makeText(this, "note added", Toast.LENGTH_SHORT).show();
-        } else if (requestCode == 2) {
+        } else if (requestCode == 2 && resultCode == RESULT_OK) {
             String title = data.getStringExtra("title");
             String description = data.getStringExtra("description");
-            Note note = new Note(title, description);
-            note.setId(data.getIntExtra("id", 0));
-            noteViewModel.update(note);
-            Toast.makeText(this, "note updated", Toast.LENGTH_SHORT).show();
+            int id = data.getIntExtra("id", 0);
+
+            // Check if the note is actually updated
+            if (!title.equals("") || !description.equals("")) {
+                Note note = new Note(title, description);
+                note.setId(id);
+                noteViewModel.update(note);
+                Toast.makeText(this, "note updated", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No changes made", Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
 }
